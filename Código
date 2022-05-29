@@ -1,0 +1,59 @@
+#include <Servo.h>
+
+#define t 50   
+Servo motor;
+int pin=7;
+int pulsmin=500;//microsegundos 
+int pulsmax=2500;
+int ang=180;
+int ang2=0;
+//////////////////ULTRASONICO-SENSOR/////////////////
+  
+#define PIN_TRIG 12
+#define PIN_ECO 13
+
+void setup() {
+
+ Serial.begin(9600);
+ pinMode(PIN_TRIG, OUTPUT);
+ pinMode(PIN_ECO, INPUT);
+
+ motor.attach(pin,pulsmin,pulsmax);
+ }
+
+void loop() {
+//////////////////ULTRASONICO-SENSOR/////////////////  
+ long duracion, distancia;
+
+ digitalWrite(PIN_TRIG, LOW);
+ delayMicroseconds(2);
+ digitalWrite(PIN_TRIG, HIGH);
+ delayMicroseconds(10);
+ digitalWrite(PIN_TRIG, LOW);
+
+ duracion=pulseIn(PIN_ECO, HIGH); // Dividir entre 2 es porque la onda recorre 2 veces el mismo camino, es decir 2cm
+ distancia=(duracion/2)/29; //La velocidad de las ondas sonoras tardan en recorrer 1cm en 29microsegundos, Velocidad del sonido 343m/s
+//Distancia = tiempo x Velocidad & Distancia real = ( tiempo x (Velocidad Sonido)/ 2 ) por que la distancia recorrida es ida y vuelta
+//////////////////// PREGUNTA 1 /////////////////////// 
+ if(distancia <= 30) {
+  Serial.println ("ABRIR PLUMA");
+  motor.write(ang);
+
+ }
+  else {
+  Serial.print (distancia);
+  Serial.println("cm");
+  motor.write(ang2);
+
+ }
+//////////////////// PREGUNTA 2 /////////////////////// 
+ if(distancia >= 80) {
+  Serial.println ("CERRAR  PLUMA");
+ }
+  else {
+  Serial.print (distancia);
+  Serial.println("cm");
+
+ }
+  
+}
